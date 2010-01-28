@@ -1,4 +1,4 @@
-HermiT is a conformant OWL 2 DL reasoner that uses the direct semantics. It
+HermiT is a conformant OWL 2 DL reasoner that uses the Direct Semantics. It
 supports all OWL2 DL constructs and the datatypes required by the OWL
 2 specification.  
 
