@@ -1,0 +1,24 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+
+<project name = "Binary Install into Protege" default = "install" basedir = ".">    
+
+   <!-- 
+        To run this build file set the environment variable
+        PROTEGE_HOME to point to a protege distribution and type ant
+        install or jar.
+     -->
+
+   <property environment="env"/>
+   <property name = "protege.home"      location="${env.PROTEGE_HOME}"/>
+   <property file="${protege.home}/build.properties"/>
+   <property file="local.properties"/>
+   
+   <property name = "protege.plugins"   location="${protege.home}/plugins"/>
+
+
+   <target name="install">
+       <copy todir="${protege.plugins}" file="org.semanticweb.HermiT.jar"/>
+   </target>
+           
+
+</project>
