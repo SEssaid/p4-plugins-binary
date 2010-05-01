@@ -59,7 +59,7 @@
      <condition property="libs.found">
        <and>
          <available file="common.lib"  type = "file"/>
-         <available file="protege.lib" type = "file
+         <available file="protege.lib" type = "file"/>
        </and>
      </condition>
      <path id = "project.classpath">    
