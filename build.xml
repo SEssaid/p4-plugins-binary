@@ -12,9 +12,93 @@
    <property name = "protege.home"      location="${env.PROTEGE_HOME}"/>
    <property file="${protege.home}/build.properties"/>
    <property file="local.properties"/>
-   
+
+   <property name = "protege.common"    location="${protege.home}/bundles"/>   
    <property name = "protege.plugins"   location="${protege.home}/plugins"/>
 
+   <property name="common.lib"
+             location="${protege.common}/org.protege.common.jar"/>
+   <property name="protege.lib" 
+             location="${protege.common}/org.protege.editor.core.application.jar"/>
+
+   <property name = "build"             location="./build"/>
+   <property name = "classes"           location="${build}/classes"/>
+   <property name = "genlib"            location = "${build}/lib"/>
+	
+   <!-- ============================================================= -->
+   <!--             Configuring the Compile Classpath                 -->
+   <!-- ============================================================= -->
+
+
+    <target name="checkProtegeLibsAndReport" depends="checkProtegeLibs"
+            unless="libs.found">
+      <echo message="Missing protege libraries.  You need to set "/>
+      <echo message="the PROTEGE_HOME environment variable to a"/>
+      <echo message="protege installation directory where the"/>
+      <echo message="appropriate plugins have been installed."/>
+      <echo message="Alternatively set the jar libs in local.properties (protege.lib=...)"/>
+      <echo message="Use the -v option to ant to see what jars are missing."/>
+      <fail message = "missing protege libraries"/>
+    </target>
+
+   <!-- 
+        **** CHANGE ME ****
+
+        The following target only needs to be modified if the user
+        needs to change the classpath.  It is preconfigured to use
+        the common protege 4 jars, the lib directory and the
+        libraries that have been uncovered in buildlibs. Also note
+        that the lib entry needs to be removed from the class path if
+        you do not have a lib directory.
+     -->
+   <target name = "checkProtegeLibs" depends="init">
+     <echo message="**********************************************************"/>
+     <echo message="Using Protege Home = ${protege.home}"/>
+     <echo message="Using Java Version = ${ant.java.version}" />
+     <echo message="**********************************************************"/>
+     <condition property="libs.found">
+       <and>
+         <available file="common.lib"  type = "file"/>
+         <available file="protege.lib" type = "file
+       </and>
+     </condition>
+     <path id = "project.classpath">    
+       <pathelement location="${protege.lib}"/>
+       <fileset dir="${genlib}"/>
+     </path>
+   </target>
+
+
+   <!-- 
+        **** CHANGE ME ****
+
+        The following target only needs to be modified if the
+        developer needs to obtain some jar files that are contained in
+        the Protege bundles.  The contents of these jar files are
+        found when Protege 4 runs but may be needed in order to
+        compile the plugin. 
+     -->
+   <target name = "buildlibs" depends="checkProtegeLibsAndReport">
+       <unjar dest="${build}"
+              src="${common.lib}">
+           <patternset>
+               <include name = "**/log4j.jar"/>
+               <include name = "**/looks.jar"/>
+           </patternset>
+       </unjar>
+   </target>
+
+
+   <target name = "init">
+     <mkdir dir = "${build}"/>
+     <mkdir dir = "${classes}"/>
+     <mkdir dir = "${genlib}"/>
+   </target>  
+
+
+   <target name="compile" depends="init,buildlibs">
+   		<javac srcdir="./src" destdir="$classes"/>
+   </target>
 
    <target name="install">
        <copy todir="${protege.plugins}" file="org.semanticweb.HermiT.jar"/>
