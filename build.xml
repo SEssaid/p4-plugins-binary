@@ -101,6 +101,7 @@
    </target>
 
    <target name="install">
+       <copy todir="${protege.plugins}" file="uk.ac.manchester.cs.owl.factplusplus.jar"/>
        <copy todir="${protege.plugins}" file="org.semanticweb.HermiT.jar"/>
    </target>
            
