@@ -21,6 +21,7 @@ public class GetPlugins {
     
     public static void main(String[] args) {
         try {
+            logger.info("finding plugins...");
             PluginRegistry registry = PluginManager.getInstance().getPluginRegistry();
             download(registry, FACTPP_ID);
         }
@@ -33,17 +34,25 @@ public class GetPlugins {
     private static void download(PluginRegistry registry, String id) throws IOException {
         for (PluginInfo info : registry.getAvailableDownloads()) {
             if (info.getId().equals(id)) {
-                URL downloadUrl = info.getDownloadURL();
-                File output = new File("build" + File.separator + id + ".jar");
-                InputStream in = new BufferedInputStream(downloadUrl.openStream());
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(output));
-                int c;
-                while ((c = in.read()) != -1) {
-                    out.write(c);
+                logger.info("trying to download " + info.getId());
+                try {
+                    URL downloadUrl = info.getDownloadURL();
+                    File output = new File("build" + File.separator + id + ".jar");
+                    InputStream in = new BufferedInputStream(downloadUrl.openStream());
+                    OutputStream out = new BufferedOutputStream(new FileOutputStream(output));
+                    int c;
+                    while ((c = in.read()) != -1) {
+                        out.write(c);
+                    }
+                    out.flush();
+                    in.close();
+                    out.close();
+                    logger.info("Downloaded " + info.getId() + ".jar from");
+                    logger.info("   " + info.getDownloadURL());
                 }
-                out.flush();
-                in.close();
-                out.close();
+                catch (Throwable t) {
+                    logger.warn("Exception caught during download " + t);
+                }
             }
         }
     }

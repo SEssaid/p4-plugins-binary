@@ -41,16 +41,6 @@
       <fail message = "missing protege libraries"/>
     </target>
 
-   <!-- 
-        **** CHANGE ME ****
-
-        The following target only needs to be modified if the user
-        needs to change the classpath.  It is preconfigured to use
-        the common protege 4 jars, the lib directory and the
-        libraries that have been uncovered in buildlibs. Also note
-        that the lib entry needs to be removed from the class path if
-        you do not have a lib directory.
-     -->
    <target name = "checkProtegeLibs" depends="init">
      <echo message="**********************************************************"/>
      <echo message="Using Protege Home = ${protege.home}"/>
@@ -58,32 +48,24 @@
      <echo message="**********************************************************"/>
      <condition property="libs.found">
        <and>
-         <available file="common.lib"  type = "file"/>
-         <available file="protege.lib" type = "file"/>
+         <available file="${protege.osgi}" type = "file"/>
+         <available file="${common.lib}"   type = "file"/>
+         <available file="${protege.lib}"  type = "file"/>
        </and>
      </condition>
      <path id = "project.classpath">    
+       <pathelement location="${protege.osgi}"/>
        <pathelement location="${protege.lib}"/>
        <fileset dir="${genlib}"/>
      </path>
    </target>
 
 
-   <!-- 
-        **** CHANGE ME ****
-
-        The following target only needs to be modified if the
-        developer needs to obtain some jar files that are contained in
-        the Protege bundles.  The contents of these jar files are
-        found when Protege 4 runs but may be needed in order to
-        compile the plugin. 
-     -->
    <target name = "buildlibs" depends="checkProtegeLibsAndReport">
        <unjar dest="${build}"
               src="${common.lib}">
            <patternset>
                <include name = "**/log4j.jar"/>
-               <include name = "**/looks.jar"/>
            </patternset>
        </unjar>
    </target>
@@ -97,11 +79,25 @@
 
 
    <target name="compile" depends="init,buildlibs">
-   		<javac srcdir="./src" destdir="$classes"/>
+   	   <javac srcdir="./src" destdir="${classes}">
+           <classpath refid = "project.classpath"/>
+       </javac>
    </target>
 
-   <target name="install">
-       <copy todir="${protege.plugins}" file="uk.ac.manchester.cs.owl.factplusplus.jar"/>
+   <target name="install" depends="compile">
+       <java classname="org.protege.install.binary.GetPlugins" fork="true">
+       	   <jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
+           <!--
+                <jvmarg value = "-agentlib:jdwp=transport=dt_socket,address=8500,server=y,suspend=n"/>
+                -->
+           <classpath>
+           	   <path refid = "project.classpath"/>
+           	   <pathelement location="${classes}"/>
+           </classpath>
+       </java>
+       <copy todir="${protege.plugins}">
+           <fileset dir="${build}" includes="*.jar"/>
+       </copy>
        <copy todir="${protege.plugins}" file="org.semanticweb.HermiT.jar"/>
    </target>
            
