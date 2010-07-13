@@ -31,13 +31,13 @@ public class GetPlugins {
         }
     }
     
-    private static void download(PluginRegistry registry, String id) throws IOException {
+    public static void download(PluginRegistry registry, String id) throws IOException {
         for (PluginInfo info : registry.getAvailableDownloads()) {
-            if (info.getId().equals(id)) {
+            if (id == null || info.getId().equals(id)) {
                 logger.info("trying to download " + info.getId());
                 try {
                     URL downloadUrl = info.getDownloadURL();
-                    File output = new File("build" + File.separator + id + ".jar");
+                    File output = new File("build" + File.separator + info.getId() + ".jar");
                     InputStream in = new BufferedInputStream(downloadUrl.openStream());
                     OutputStream out = new BufferedOutputStream(new FileOutputStream(output));
                     int c;
