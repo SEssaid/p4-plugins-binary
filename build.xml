@@ -85,7 +85,7 @@
    </target>
 
    <target name="install" depends="compile">
-
+       <!--
        <java classname="org.protege.install.binary.GetPlugins" fork="true">
        	   <jvmarg value="-Dlog4j.configuration=file:log4j.xml"/>
                 <jvmarg value = "-agentlib:jdwp=transport=dt_socket,address=8500,server=y,suspend=n"/>
@@ -94,7 +94,7 @@
            	   <pathelement location="${classes}"/>
            </classpath>
        </java>
-
+       -->
        <copy todir="${protege.plugins}">
            <fileset dir="${build}" includes="*.jar"/>
        </copy>
